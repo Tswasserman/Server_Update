@@ -1,4 +1,5 @@
- // Read parameters from URL
+<script>
+  // Read parameters from URL
   const urlParams = new URLSearchParams(window.location.search);
   const duration = parseInt(urlParams.get('duration')) || 20;
   const mode = urlParams.get('mode') || 'download';
@@ -28,6 +29,7 @@
     let currentSize = Math.min(Math.floor(elapsed * rate), totalSize);
     filesize.innerText = currentSize + " MB of " + totalSize + " MB";
 
+    // Use <br> for line breaks in HTML
     log.innerHTML += `[INFO] ${status.innerText}...<br>`;
     log.scrollTop = log.scrollHeight;
 
@@ -41,3 +43,4 @@
       log.innerHTML += "[SUCCESS] Operation completed successfully.<br>";
     }
   }, 1000);
+</script>
