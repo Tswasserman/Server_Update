@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulation</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    .progress-container { width: 80%; margin: 20px auto; background: #eee; border-radius: 5px; }
+    .progress-bar { width: 0%; height: 30px; background: #4caf50; border-radius: 5px; transition: width 0.3s; }
+    .spinner { margin: 20px auto; border: 6px solid #eee; border-top: 6px solid #4caf50; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .status { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1 id="title">Simulation Running...</h1>
+  
+  <div class="progress-container">
+    <div class="progress-bar" id="progress"></div>
+  </div>
+  <div class="spinner"></div>
+  <div class="status" id="status">Starting...</div>
+  <div id="eta"></div>
+  <div id="filesize"></div>
+
+  <script>
+    // Get parameters from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get('mode') || 'download';
+    const duration = parseInt(urlParams.get('duration')) || 20;
+
+    const progress = document.getElementById("progress");
+    const status = document.getElementById("status");
+    const eta = document.getElementById("eta");
+    const filesize = document.getElementById("filesize");
+    const title = document.getElementById("title");
+
+    let elapsed = 0;
+    let totalSize = 500; // MB
+    let interval = setInterval(() => {
+      elapsed++;
+      let percent = Math.min((elapsed / duration) * 100, 100);
+      progress.style.width = percent + "%";
+      eta.innerText = "ETA: " + (duration - elapsed) + "s";
+      let currentSize = Math.floor((percent / 100) * totalSize);
+      filesize.innerText = currentSize + " MB of " + totalSize + " MB";
+
+      if (elapsed >= duration) {
+        clearInterval(interval);
+        status.innerText = mode === "download" ? "Download Complete!" : "Update Complete!";
+        eta.innerText = "";
+        filesize.innerText = "";
+        if (mode === "download") {
+          status.innerHTML += "<br><a href='#'>Click here to access file</a>";
+        }
+      } else {
+        status.innerText = mode === "download" ? "Downloading file..." : "Updating system...";
+      }
+    }, 1000);
+
+    title.innerText = mode === "download" ? "Downloading Simulation" : "Updating Simulation";
+  </script>
+</body>
+</html>
