@@ -4,27 +4,86 @@
   <meta charset="UTF-8">
   <title>Simulation</title>
   <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-    .progress-container { width: 80%; margin: 20px auto; background: #eee; border-radius: 5px; }
-    .progress-bar { width: 0%; height: 30px; background: #4caf50; border-radius: 5px; transition: width 0.3s; }
-    .spinner { margin: 20px auto; border: 6px solid #eee; border-top: 6px solid #4caf50; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #1e1e2f;
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .window {
+      background: #2a2a3d;
+      border-radius: 10px;
+      width: 500px;
+      padding: 30px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    }
+    .header {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
+      border-bottom: 1px solid #444;
+      padding-bottom: 10px;
+    }
+    .progress-container {
+      width: 100%;
+      background: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 25px;
+      background: linear-gradient(90deg, #4cafef, #00c6ff);
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+      transition: width 0.4s ease;
+    }
+    .spinner {
+      margin: 20px auto;
+      border: 6px solid #444;
+      border-top: 6px solid #00c6ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .status { margin-top: 20px; font-size: 18px; }
+    .status, #eta, #filesize {
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    .complete {
+      font-size: 20px;
+      color: #4caf50;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .link {
+      color: #00c6ff;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
-  <h1 id="title">Simulation Running...</h1>
-  
-  <div class="progress-container">
-    <div class="progress-bar" id="progress"></div>
+  <div class="window">
+    <div class="header" id="title">Simulation Running...</div>
+    
+    <div class="progress-container">
+      <div class="progress-bar" id="progress"></div>
+    </div>
+    <div class="spinner" id="spinner"></div>
+    <div class="status" id="status">Starting...</div>
+    <div id="eta"></div>
+    <div id="filesize"></div>
+    <div class="complete" id="complete"></div>
   </div>
-  <div class="spinner"></div>
-  <div class="status" id="status">Starting...</div>
-  <div id="eta"></div>
-  <div id="filesize"></div>
 
   <script>
-    // Get parameters from URL
     const urlParams = new URLSearchParams(window.location.search);
     const mode = urlParams.get('mode') || 'download';
     const duration = parseInt(urlParams.get('duration')) || 20;
@@ -34,31 +93,47 @@
     const eta = document.getElementById("eta");
     const filesize = document.getElementById("filesize");
     const title = document.getElementById("title");
+    const complete = document.getElementById("complete");
+    const spinner = document.getElementById("spinner");
 
     let elapsed = 0;
     let totalSize = 500; // MB
+    const messages = mode === "download" 
+      ? ["Preparing download...", "Downloading file...", "Finalizing download..."] 
+      : ["Preparing update...", "Updating system files...", "Installing components..."];
+
+    title.innerText = mode === "download" ? "Download Server" : "Updating System Server";
+
     let interval = setInterval(() => {
       elapsed++;
       let percent = Math.min((elapsed / duration) * 100, 100);
       progress.style.width = percent + "%";
       eta.innerText = "ETA: " + (duration - elapsed) + "s";
-      let currentSize = Math.floor((percent / 100) * totalSize);
+
+      // MB grows steadily with seconds, capped at 50 MB/sec
+      let rate = totalSize / duration;
+      if (rate > 50) rate = 50; // cap speed
+      let currentSize = Math.min(Math.floor(elapsed * rate), totalSize);
       filesize.innerText = currentSize + " MB of " + totalSize + " MB";
+
+      // Rotate status messages
+      if (elapsed < duration) {
+        let msgIndex = Math.floor((elapsed / duration) * messages.length);
+        status.innerText = messages[msgIndex];
+      }
 
       if (elapsed >= duration) {
         clearInterval(interval);
-        status.innerText = mode === "download" ? "Download Complete!" : "Update Complete!";
+        spinner.style.display = "none";
         eta.innerText = "";
         filesize.innerText = "";
+        status.innerText = "";
+        complete.innerText = mode === "download" ? "✔ Download Complete!" : "✔ Update Complete!";
         if (mode === "download") {
-          status.innerHTML += "<br><a href='#'>Click here to access file</a>";
+          complete.innerHTML += "<br><a class='link' href='#'>Click here to access file</a>";
         }
-      } else {
-        status.innerText = mode === "download" ? "Downloading file..." : "Updating system...";
       }
     }, 1000);
-
-    title.innerText = mode === "download" ? "Downloading Simulation" : "Updating Simulation";
   </script>
 </body>
 </html>
