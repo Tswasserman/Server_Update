@@ -2,32 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simulation</title>
+  <title>Server Update Tutorial</title>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: #1e1e2f;
-      color: #f0f0f0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: #f4f4f9;
+      color: #333;
       margin: 0;
     }
-    .window {
-      background: #2a2a3d;
-      border-radius: 10px;
-      width: 500px;
-      padding: 30px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    header {
+      background: #1e1e2f;
+      color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .header {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 20px;
+    header h1 { margin: 0; font-size: 22px; }
+    nav a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      gap: 20px;
+    }
+    article {
+      flex: 3;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    aside {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    footer {
+      background: #1e1e2f;
+      color: #fff;
       text-align: center;
-      border-bottom: 1px solid #444;
-      padding-bottom: 10px;
+      padding: 15px;
+      margin-top: 30px;
+    }
+    /* Simulation styles */
+    .simulation {
+      background: #2a2a3d;
+      color: #f0f0f0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
     }
     .progress-container {
       width: 100%;
@@ -40,7 +71,7 @@
       width: 0%;
       height: 25px;
       background: linear-gradient(90deg, #4cafef, #00c6ff);
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+      box-shadow: 0 0 10px #00c6ff;
       transition: width 0.4s ease;
     }
     .spinner {
@@ -53,56 +84,110 @@
       animation: spin 1s linear infinite;
     }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .status, #eta, #filesize {
+    .status, #eta, #filesize, .complete {
       margin-top: 10px;
       font-size: 16px;
+      text-align: center;
     }
-    .complete {
-      font-size: 20px;
-      color: #4caf50;
-      font-weight: bold;
+    .log {
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 13px;
+      height: 120px;
+      overflow-y: auto;
       margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
     }
-    .link {
-      color: #00c6ff;
-      text-decoration: none;
+    .ad {
+      background: #eee;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="window">
-    <div class="header" id="title">Simulation Running...</div>
-    
-    <div class="progress-container">
-      <div class="progress-bar" id="progress"></div>
-    </div>
-    <div class="spinner" id="spinner"></div>
-    <div class="status" id="status">Starting...</div>
-    <div id="eta"></div>
-    <div id="filesize"></div>
-    <div class="complete" id="complete"></div>
+  <header>
+    <h1>TechPortal</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Tutorials</a>
+      <a href="#">Downloads</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <article>
+      <h2>PHP Server Update 2026</h2>
+      <p><em>Published: 1991 — Author: Time TechPortal</em></p>
+      <p>- Security: Older PHP versions quickly become unsupported, leaving your servers exposed to exploits.
+- Performance: Each major release improves execution speed and memory handling.
+- Compatibility: Frameworks like Laravel, Symfony, and WordPress often require newer PHP versions.
+- Support Lifecycle: PHP versions are only community-supported for about 4 years, after which they reach end-of-life.
+</p>
+
+      <!-- Simulation module -->
+      <div class="simulation">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress"></div>
+        </div>
+        <div class="spinner" id="spinner"></div>
+        <div class="status" id="status">Starting...</div>
+        <div id="eta"></div>
+        <div id="filesize"></div>
+        <div class="complete" id="complete"></div>
+        <div class="log" id="log">[INFO] Initializing update sequence...<br></div>
+      </div>
+    </article>
+
+    <aside>
+      <h3>Recent Posts</h3>
+      <ul>
+        <li>Fixing Start Menu Issues on Windows Server</li>
+        <li>Configuring AppLocker Policies</li>
+        <li>Optimizing WSUS Performance</li>
+        <li>Bugs Patched</li>
+        - Memory leaks in long‑running scripts
+- Segmentation faults in certain extensions (e.g., DOM, GD)
+- Incorrect type handling in property hooks or visibility rules
+- Crashes when using preg_replace_callback() with large datasets
+- Issues with PDO connections dropping unexpectedly
+- Bugs in DateTime calculations with leap seconds or time zones
+- Problems with json_encode() producing invalid UTF‑8 sequences
+- Performance regressions in opcache caching and JIT compilation
+
+      </ul>
+      <h3>Sponsored Ads</h3>
+      <div class="ad">🔥 Buy Premium Hosting Now!</div>
+      <div class="ad">💻 Upgrade to Pro Tools</div>
+      <div class="ad">📦 Get Extra Storage Space</div>
+    </aside>
   </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get('mode') || 'download';
-    const duration = parseInt(urlParams.get('duration')) || 20;
+  <footer>
+    © 2025 TechPortal — All Rights Reserved
+  </footer>
 
+  <script>
+    const duration = 20; // seconds
     const progress = document.getElementById("progress");
     const status = document.getElementById("status");
     const eta = document.getElementById("eta");
     const filesize = document.getElementById("filesize");
-    const title = document.getElementById("title");
     const complete = document.getElementById("complete");
     const spinner = document.getElementById("spinner");
+    const log = document.getElementById("log");
 
     let elapsed = 0;
-    let totalSize = 1984; // MB
-    const messages = mode === "download" 
-      ? ["Preparing download...", "Downloading file...", "Finalizing download..."] 
-      : ["Preparing update...", "Updating system files...", "Installing components..."];
-
-    title.innerText = mode === "download" ? "Download Server" : "Updating System Server";
+    let totalSize = 500; // MB
+    const messages = ["Connecting to server...", "Downloading file...", "Verifying package...", "Finalizing..."];
 
     let interval = setInterval(() => {
       elapsed++;
@@ -110,9 +195,9 @@
       progress.style.width = percent + "%";
       eta.innerText = "ETA: " + (duration - elapsed) + "s";
 
-      // MB grows steadily with seconds, capped at 50 MB/sec
+      // MB grows steadily, capped at 50 MB/sec
       let rate = totalSize / duration;
-      if (rate > 50) rate = 50; // cap speed
+      if (rate > 50) rate = 50;
       let currentSize = Math.min(Math.floor(elapsed * rate), totalSize);
       filesize.innerText = currentSize + " MB of " + totalSize + " MB";
 
@@ -122,19 +207,20 @@
         status.innerText = messages[msgIndex];
       }
 
+      // Add fake log entries
+      log.innerHTML += `[INFO] ${status.innerText}...<br>`;
+      log.scrollTop = log.scrollHeight;
+
       if (elapsed >= duration) {
         clearInterval(interval);
         spinner.style.display = "none";
         eta.innerText = "";
         filesize.innerText = "";
         status.innerText = "";
-        complete.innerText = mode === "download" ? "✔ Download Complete!" : "✔ Update Complete!";
-        if (mode === "download") {
-          complete.innerHTML += "<br><a class='link' href='#'>Click here to access file</a>";
-        }
+        complete.innerText = "✔ Update Complete!";
+        log.innerHTML += "[SUCCESS] Operation completed successfully.<br>";
       }
     }, 1000);
   </script>
 </body>
 </html>
-
