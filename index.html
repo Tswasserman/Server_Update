@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Program Control Panel</title>
+</head>
+<body>
+  <h1>Program Simulation Control</h1>
+  
+  <form action="simulate.html" method="GET">
+    <label for="mode">Choose Mode:</label>
+    <select id="mode" name="mode">
+      <option value="download">Download</option>
+      <option value="update">Update</option>
+    </select>
+    <br><br>
+    
+    <label for="duration">Set Duration (seconds):</label>
+    <input type="number" id="duration" name="duration" value="20" min="5">
+    <br><br>
+    
+    <button type="submit">Start Simulation</button>
+  </form>
+</body>
+</html>
