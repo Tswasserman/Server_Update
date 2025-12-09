@@ -1,46 +1,227 @@
-<script>
-  // Read parameters from URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const duration = parseInt(urlParams.get('duration')) || 20;
-  const mode = urlParams.get('mode') || 'download';
-
-  const progress = document.getElementById("progress");
-  const status = document.getElementById("status");
-  const eta = document.getElementById("eta");
-  const filesize = document.getElementById("filesize");
-  const complete = document.getElementById("complete");
-  const spinner = document.getElementById("spinner");
-  const log = document.getElementById("log");
-
-  let elapsed = 0;
-  let totalSize = 500; // MB
-  let rate = totalSize / duration;
-  if (rate > 50) rate = 50; // cap at 50 MB/sec
-
-  status.innerText = mode === "download" ? "Downloading..." : "Updating...";
-  eta.innerText = "ETA: " + duration + "s";
-
-  const interval = setInterval(() => {
-    elapsed++;
-    let percent = Math.min((elapsed / duration) * 100, 100);
-    progress.style.width = percent + "%";
-    eta.innerText = "ETA: " + (duration - elapsed) + "s";
-
-    let currentSize = Math.min(Math.floor(elapsed * rate), totalSize);
-    filesize.innerText = currentSize + " MB of " + totalSize + " MB";
-
-    // Use <br> for line breaks in HTML
-    log.innerHTML += `[INFO] ${status.innerText}...<br>`;
-    log.scrollTop = log.scrollHeight;
-
-    if (elapsed >= duration) {
-      clearInterval(interval);
-      spinner.style.display = "none";
-      eta.innerText = "";
-      filesize.innerText = "";
-      status.innerText = "";
-      complete.innerText = mode === "download" ? "✔ Download Complete!" : "✔ Update Complete!";
-      log.innerHTML += "[SUCCESS] Operation completed successfully.<br>";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Server Update Tutorial</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f4f9;
+      color: #333;
+      margin: 0;
     }
-  }, 1000);
-</script>
+    header {
+      background: #1e1e2f;
+      color: #fff;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header h1 { margin: 0; font-size: 22px; }
+    nav a {
+      color: #fff;
+      margin-left: 20px;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: 20px auto;
+      gap: 20px;
+    }
+    article {
+      flex: 3;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    aside {
+      flex: 1;
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    footer {
+      background: #1e1e2f;
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      margin-top: 30px;
+    }
+    /* Simulation styles */
+    .simulation {
+      background: #2a2a3d;
+      color: #f0f0f0;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .progress-container {
+      width: 100%;
+      background: #444;
+      border-radius: 5px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 25px;
+      background: linear-gradient(90deg, #4cafef, #00c6ff);
+      box-shadow: 0 0 10px #00c6ff;
+      transition: width 0.4s ease;
+    }
+    .spinner {
+      margin: 20px auto;
+      border: 6px solid #444;
+      border-top: 6px solid #00c6ff;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    .status, #eta, #filesize, .complete {
+      margin-top: 10px;
+      font-size: 16px;
+      text-align: center;
+    }
+    .log {
+      background: #111;
+      color: #0f0;
+      font-family: monospace;
+      font-size: 13px;
+      height: 120px;
+      overflow-y: auto;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
+    }
+    .ad {
+      background: #eee;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>TechPortal</h1>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Tutorials</a>
+      <a href="#">Downloads</a>
+      <a href="#">Contact</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <article>
+      <h2>PHP Server Update 2026</h2>
+      <p><em>Published: December 9, 2025 — Author: TechPortal</em></p>
+      <p>
+        - Security: Older PHP versions quickly become unsupported, leaving your servers exposed to exploits.<br>
+        - Performance: Each major release improves execution speed and memory handling.<br>
+        - Compatibility: Frameworks like Laravel, Symfony, and WordPress often require newer PHP versions.<br>
+        - Support Lifecycle: PHP versions are only community-supported for about 4 years, after which they reach end-of-life.
+      </p>
+
+      <!-- Simulation module -->
+      <div class="simulation">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress"></div>
+        </div>
+        <div class="spinner" id="spinner"></div>
+        <div class="status" id="status">Starting...</div>
+        <div id="eta"></div>
+        <div id="filesize"></div>
+        <div class="complete" id="complete"></div>
+        <div class="log" id="log">[INFO] Initializing update sequence...<br></div>
+      </div>
+    </article>
+
+    <aside>
+      <h3>Recent Posts</h3>
+      <ul>
+        <li>Fixing Start Menu Issues on Windows Server</li>
+        <li>Configuring AppLocker Policies</li>
+        <li>Optimizing WSUS Performance</li>
+        <li>Bugs Patched
+          <ul>
+            <li>Memory leaks in long‑running scripts</li>
+            <li>Segmentation faults in certain extensions (e.g., DOM, GD)</li>
+            <li>Incorrect type handling in property hooks or visibility rules</li>
+            <li>Crashes when using preg_replace_callback() with large datasets</li>
+            <li>Issues with PDO connections dropping unexpectedly</li>
+            <li>Bugs in DateTime calculations with leap seconds or time zones</li>
+            <li>Problems with json_encode() producing invalid UTF‑8 sequences</li>
+            <li>Performance regressions in opcache caching and JIT compilation</li>
+          </ul>
+        </li>
+      </ul>
+      <h3>Sponsored Ads</h3>
+      <div class="ad">🔥 Buy Premium Hosting Now!</div>
+      <div class="ad">💻 Upgrade to Pro Tools</div>
+      <div class="ad">📦 Get Extra Storage Space</div>
+    </aside>
+  </div>
+
+  <footer>
+    © 2025 TechPortal — All Rights Reserved
+  </footer>
+
+  <script>
+    // Read parameters from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const duration = parseInt(urlParams.get('duration')) || 20;
+    const mode = urlParams.get('mode') || 'download';
+
+    const progress = document.getElementById("progress");
+    const status = document.getElementById("status");
+    const eta = document.getElementById("eta");
+    const filesize = document.getElementById("filesize");
+    const complete = document.getElementById("complete");
+    const spinner = document.getElementById("spinner");
+    const log = document.getElementById("log");
+
+    let elapsed = 0;
+    let totalSize = 500; // MB
+    let rate = totalSize / duration;
+    if (rate > 50) rate = 50; // cap at 50 MB/sec
+
+    status.innerText = mode === "download" ? "Downloading..." : "Updating...";
+    eta.innerText = "ETA: " + duration + "s";
+
+    const interval = setInterval(() => {
+      elapsed++;
+      let percent = Math.min((elapsed / duration) * 100, 100);
+      progress.style.width = percent + "%";
+      eta.innerText = "ETA: " + (duration - elapsed) + "s";
+
+      let currentSize = Math.min(Math.floor(elapsed * rate), totalSize);
+      filesize.innerText = currentSize + " MB of " + totalSize + " MB";
+
+      log.innerHTML += `[INFO] ${status.innerText}...<br>`;
+      log.scrollTop = log.scrollHeight;
+
+      if (elapsed >= duration) {
+        clearInterval(interval);
+        spinner.style.display = "none";
+        eta.innerText = "";
+        filesize.innerText = "";
+        status.innerText = "";
+        complete.innerText = mode === "download" ? "✔ Download Complete!" : "✔ Update Complete!";
+        log.innerHTML += "[SUCCESS] Operation completed successfully.<br>";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
